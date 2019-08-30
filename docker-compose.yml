@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  pl-sonarqube:
+    container_name: pl-sonarqube
+    image: sonarqube:lts-alpine
+    ports:
+      - "9050:9000"
+    volumes:
+      - sonarqube_conf:/opt/sonarqube/conf
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+  pl-jenkins:
+    container_name: pl-jenkins
+    image: jenkinsci/blueocean:latest
+    privileged: true
+    user: root
+    ports:
+      - "8081:8080"
+      - "50000:50000"
+    volumes:
+      - /tmp/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - pl-sonarqube
+
+volumes:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
